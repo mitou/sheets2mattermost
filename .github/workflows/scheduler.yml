@@ -1,0 +1,32 @@
+name: Scheduler (Every 10 minutes)
+
+# Spec: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#scheduled-events-schedule
+# For debug: https://crontab.guru/
+on:
+  schedule:
+    - cron:  '*/10 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: 💎 Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
+        #ruby-version: 3.1 # Not necessary if .ruby-version is given
+
+    - name: 🧪 Install Ruby gems
+      run: bundle install --jobs 4 --retry 3
+
+    - name: 💎 Exec wufoo2mattermost task
+      run: bundle exec rake notify_wufoo_entry_to_mattermost
+      env:
+        TZ: 'Asia/Tokyo'
+        WUFOO_API_USERNAME:  ${{ secrets.WUFOO_API_USERNAME }}
+        WUFOO_API_PASSWORD:  ${{ secrets.WUFOO_API_PASSWORD }}
+        WUFOO_API_SUBDOMAIN: ${{ secrets.WUFOO_API_SUBDOMAIN }}
+        WUFOO_API_FORM_ID:   ${{ secrets.WUFOO_API_FORM_ID }}
+        MATTERMOST_ENDPOINT: ${{ secrets.MATTERMOST_ENDPOINT }}
