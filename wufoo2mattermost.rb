@@ -49,9 +49,9 @@ def fetch_wufoo_form_entries
   # Entry Field Info:
   # - entry['Field206'] # Project Title
   # - entry['Field168'] # has_prototype? (はい/いいえ)
-  # - entry['Field208'] # is_new_submit? (or update?)
+  # - entry['Field208'] # is_this_update? (はい/いいえ)
   # - entry['Field1']   # Project Details (URL)
-  # - entry['DateCreated'] # No timezone info
+  # - entry['DateCreated'] # When to submitted (No timezone info)
 
   response
 end
@@ -59,19 +59,17 @@ end
 TIME_INTERVAL = 10 # minutes
 #TIME_INTERVAL = 60 * 24 * 7 # for debug in local
 JSON_RESPONSE = fetch_wufoo_form_entries
-text_to_post  = ''
 JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
   # Skip WIP or not-recent entries
   next if entry['Field1'].empty?
   next if (Time.now.round - Time.parse("#{entry['DateCreated']} +0900")).to_i > TIME_INTERVAL * 60 # seconds
 
-  project_title = entry['Field206']
-  has_prototype = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
+  project_title   = entry['Field206']
+  has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
   is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
   project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
 
-  text_to_post += "- #{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}\n"
+  send_to_mattermost "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
 end
 
-send_to_mattermost(text_to_post) unless text_to_post.empty?
 puts "✅ Successfully check entries."
