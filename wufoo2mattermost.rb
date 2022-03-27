@@ -56,8 +56,8 @@ def fetch_wufoo_form_entries
   response
 end
 
-TIME_INTERVAL = 10 # minutes
-#TIME_INTERVAL = 60 * 24 * 7 # for debug in local
+#TIME_INTERVAL = 10 # minutes
+TIME_INTERVAL = 60 * 24 * 7 # 7 days for debugging
 JSON_RESPONSE = fetch_wufoo_form_entries
 text_to_post  = ''
 JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
