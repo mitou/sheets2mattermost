@@ -10,17 +10,17 @@ WUFOO_API_SUBDOMAIN = ENV['WUFOO_API_SUBDOMAIN']
 WUFOO_API_FORM_ID   = ENV['WUFOO_API_FORM_ID']
 MATTERMOST_ENDPOINT = ENV['MATTERMOST_ENDPOINT']
 
-base_url = "https://#{WUFOO_API_SUBDOMAIN}.wufoo.com/api/v3/"
+base_domain = "https://#{WUFOO_API_SUBDOMAIN}.wufoo.com"
 
 # Sample URI to get 'form' information.
 # 'form' can be replaced  with '[fields|entries].json]
 # https://wufoo.github.io/docs/?ruby#introduction
 #
 # Exec this to get Wufoo form IDs and set it to the variable
-# uri = URI.parse(base_url + 'forms.json')
+# uri = URI.parse(base_domain + '/api/v3/forms.json')
 
-# Get given entries via API
-uri = URI.parse(base_url + 'entries.json')
+# Get given form entries via API
+uri = URI.parse(base_domain + "/api/v3/forms/#{WUFOO_API_FORM_ID}/entries.json")
 
 # Set up our request using the desired endpoint, and configure the basic auth
 request = Net::HTTP::Get.new(uri.request_uri)
