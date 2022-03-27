@@ -18,9 +18,6 @@ jobs:
         bundler-cache: false
         #ruby-version: 3.1 # Not necessary if .ruby-version is given
 
-    - name: 🧪 Install Ruby gems
-      run: bundle install --jobs 4 --retry 3
-
     - name: 💎 Exec wufoo2mattermost task
       run: bundle exec rake notify_wufoo_entry_to_mattermost
       env:
