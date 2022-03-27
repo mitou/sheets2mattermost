@@ -4,8 +4,7 @@ name: Scheduler (Every 10 minutes)
 # For debug: https://crontab.guru/
 on:
   schedule:
-    - cron:  '*/5 * * * *'
-#    - cron:  '*/10 * * * *'
+    - cron:  '*/10 * * * *'
 
 jobs:
   build:

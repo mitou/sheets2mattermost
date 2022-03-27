@@ -56,8 +56,8 @@ def fetch_wufoo_form_entries
   response
 end
 
-#TIME_INTERVAL = 10 # minutes
-TIME_INTERVAL = 60 * 24 * 7 # for debug in local
+TIME_INTERVAL = 10 # minutes
+#TIME_INTERVAL = 60 * 24 * 7 # for debug in local
 JSON_RESPONSE = fetch_wufoo_form_entries
 JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
   # Skip WIP or not-recent entries
