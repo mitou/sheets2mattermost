@@ -1,10 +1,10 @@
-name: Scheduler (Every 10 minutes)
+name: Scheduler (Every 1 hour)
 
 # Spec: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#scheduled-events-schedule
 # For debug: https://crontab.guru/
 on:
   schedule:
-    - cron:  '*/10 * * * *'
+    - cron:  '0 * * * *'
 
 jobs:
   build:
