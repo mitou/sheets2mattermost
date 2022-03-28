@@ -62,7 +62,7 @@ JSON_RESPONSE = fetch_wufoo_form_entries
 JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
   # Skip WIP or not-recent entries
   next if entry['Field1'].empty?
-  next if (Time.now.round - Time.parse("#{entry['DateCreated']} +0900")).to_i > TIME_INTERVAL * 60 # seconds
+  next if (Time.now.round - Time.parse("#{entry['DateCreated']} -0600")).to_i > TIME_INTERVAL * 60 # seconds
 
   project_title   = entry['Field206']
   has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
