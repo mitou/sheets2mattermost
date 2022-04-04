@@ -19,11 +19,22 @@ jobs:
         #ruby-version: 3.1 # Not necessary if .ruby-version is given
 
     - name: 🔔 Exec wufoo2mattermost task
-      run: bundle exec rake notify_wufoo_entry_to_mattermost
       env:
         TZ: 'Asia/Tokyo'
+        FILEPATH: 'entry_id_list.yaml'
         WUFOO_API_USERNAME:  ${{ secrets.WUFOO_API_USERNAME }}
         WUFOO_API_PASSWORD:  ${{ secrets.WUFOO_API_PASSWORD }}
         WUFOO_API_SUBDOMAIN: ${{ secrets.WUFOO_API_SUBDOMAIN }}
         WUFOO_API_FORM_ID:   ${{ secrets.WUFOO_API_FORM_ID }}
         MATTERMOST_ENDPOINT: ${{ secrets.MATTERMOST_ENDPOINT }}
+      run: |
+        bundle exec rake notify_wufoo_entry_to_mattermost
+        if [ -n "$(git status ${{ env.FILEPATH }} --porcelain)" ]; then
+          git config user.name  "Yohei Yasukawa"
+          git config user.email "yohei@yasslab.jp"
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git checkout main
+          git add ${{ env.FILEPATH }}
+          git commit -m '🤖 Update current YAML data by GitHub Actions'
+          git push origin main
+        fi

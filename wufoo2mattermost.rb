@@ -3,6 +3,7 @@
 require 'net/http'
 require 'json'
 require 'time'
+require 'yaml'
 
 WUFOO_API_USERNAME  = ENV['WUFOO_API_USERNAME']
 WUFOO_API_PASSWORD  = ENV['WUFOO_API_PASSWORD']
@@ -47,6 +48,7 @@ def fetch_wufoo_form_entries
   # this won't be worked. Please change each field on your own.
   #
   # Entry Field Info:
+  # - entry['EntryId']  # Form Entry ID
   # - entry['Field206'] # Project Title
   # - entry['Field168'] # has_prototype? (はい/いいえ)
   # - entry['Field208'] # is_this_update? (はい/いいえ)
@@ -56,20 +58,36 @@ def fetch_wufoo_form_entries
   response
 end
 
-TIME_INTERVAL = 60 # minutes
+# Time-based notification does NOT work due to
+# the lack of timezone information in entry data.
+#TIME_INTERVAL = 60 # minutes
 #TIME_INTERVAL = 60 * 24 * 7 # for debug in local
-JSON_RESPONSE = fetch_wufoo_form_entries
+#next if (Time.now.round - Time.parse("#{entry['DateCreated']} -0600")).to_i > TIME_INTERVAL * 60 # seconds
+
+JSON_RESPONSE = fetch_wufoo_form_entries()
+ENTRY_ID_FILE = 'entry_id_list.yaml'.freeze
+ENTRY_ID_DATA = YAML.load(IO.read ENTRY_ID_FILE)
+entry_id_list = ENTRY_ID_DATA.dup
+
 JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
-  # Skip WIP or not-recent entries
-  next if entry['Field1'].empty?
-  next if (Time.now.round - Time.parse("#{entry['DateCreated']} -0600")).to_i > TIME_INTERVAL * 60 # seconds
+  # Skip already-notified entry
+  next if ENTRY_ID_DATA.include? entry['EntryId'].to_i
 
-  project_title   = entry['Field206']
-  has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
-  is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
-  project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
+  # Record new entry including WIP one (no attached file)
+  entry_id_list << entry['EntryId'].to_i
 
-  send_to_mattermost "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
+  # Send notification if new entry with attached file (提案書)
+  unless entry['Field1'].empty?
+    form_entry_id   = entry['EntryId']
+    project_title   = entry['Field206']
+    has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
+    is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
+    project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
+
+    #puts "#{form_entry_id}: #{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
+    send_to_mattermost "#{form_entry_id}: #{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
+  end
 end
 
+IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
 puts "✅ Successfully check entries."
