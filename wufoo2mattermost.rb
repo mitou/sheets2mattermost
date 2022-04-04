@@ -77,16 +77,16 @@ JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
   entry_id_list << entry['EntryId'].to_i
 
   # Send notification if new entry with attached file (提案書)
-  unless entry['Field1'].empty?
-    form_entry_id   = entry['EntryId']
-    project_title   = entry['Field206']
-    has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
-    is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
-    project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
+  next if entry['Field1'].empty?
 
-    #puts "#{form_entry_id}: #{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
-    send_to_mattermost "#{form_entry_id}: #{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
-  end
+  form_entry_id   = entry['EntryId']
+  project_title   = entry['Field206']
+  has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
+  is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
+  project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
+
+  #puts "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
+  send_to_mattermost "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
 end
 
 IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
