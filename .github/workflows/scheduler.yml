@@ -31,11 +31,9 @@ jobs:
       run: |
         bundle exec rake notify_wufoo_entry_to_mattermost
         if [ -n "$(git status ${{ env.FILEPATH }} --porcelain)" ]; then
-          git config user.name  "Yohei Yasukawa"
-          git config user.email "yohei@yasslab.jp"
-          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git checkout main
+          git config --global user.name  "Yohei Yasukawa"
+          git config --global user.email "yohei@yasslab.jp"
           git add ${{ env.FILEPATH }}
           git commit -m '🤖 Update current YAML data by GitHub Actions'
-          git push origin main
+          git push
         fi
