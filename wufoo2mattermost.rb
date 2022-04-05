@@ -70,22 +70,18 @@ ENTRY_ID_DATA = YAML.load(IO.read ENTRY_ID_FILE)
 entry_id_list = ENTRY_ID_DATA.dup
 
 JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
-  # Skip already-notified entry
+  # Skip already-notified and work-in-progress entry (with no attached file)
   next if ENTRY_ID_DATA.include? entry['EntryId'].to_i
-
-  # Record new entry including WIP one (no attached file)
-  entry_id_list << entry['EntryId'].to_i
-
-  # Send notification if new entry with attached file (提案書)
   next if entry['Field1'].empty?
 
+  # Record new entry and notify it to Mattermost
+  entry_id_list  << entry['EntryId'].to_i
   form_entry_id   = entry['EntryId']
   project_title   = entry['Field206']
   has_prototype   = entry['Field168'].include?('はい') ? '(プロトタイプ有)' : ''
   is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
   project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
 
-  #puts "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
   send_to_mattermost "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
 end
 
