@@ -33,7 +33,8 @@ jobs:
         if [ -n "$(git status ${{ env.FILEPATH }} --porcelain)" ]; then
           git config --global user.name  "Yohei Yasukawa"
           git config --global user.email "yohei@yasslab.jp"
+          git checkout main
           git add ${{ env.FILEPATH }}
           git commit -m '🤖 Update current YAML data by GitHub Actions'
-          git push
+          git push origin main
         fi
