@@ -69,7 +69,7 @@ ENTRY_ID_FILE = 'entry_id_list.yaml'.freeze
 ENTRY_ID_DATA = YAML.load(IO.read ENTRY_ID_FILE)
 entry_id_list = ENTRY_ID_DATA.dup
 
-JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
+JSON.parse(JSON_RESPONSE.body)['Entries'].reverse.each do |entry|
   # Skip already-notified and work-in-progress entry (with no attached file)
   next if ENTRY_ID_DATA.include? entry['EntryId'].to_i
   next if entry['Field1'].empty?
