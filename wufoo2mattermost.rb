@@ -82,7 +82,7 @@ JSON.parse(JSON_RESPONSE.body)['Entries'].each do |entry|
   is_this_update  = entry['Field208'].include?('はい') ? '🔁' : '🆕'
   project_details = entry['Field1'].split.last.delete('()') # Project Details (URL)
 
-  send_to_mattermost "#{is_this_update} #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
+  send_to_mattermost "#{is_this_update} #{entry['EntryId']}: #{project_title} \[[Download](#{project_details})\] #{has_prototype}"
 end
 
 IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
