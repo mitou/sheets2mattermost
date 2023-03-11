@@ -1,23 +1,27 @@
-name: Scheduler (Every 10 minutes)
+name: Scheduler (Every 60 minutes)
 
-# Spec: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#scheduled-events-schedule
-# For debug: https://crontab.guru/
 on:
   schedule:
-    - cron: '*/10 * * * *' # Every 10 minutes
-#    - cron: '0 * * * *'   # Every 1 hour
+    - cron: '0 * * * *'   # Every 1 hour
+  # Allows you to run this workflow manually from the Actions tab
+  # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: ☑️ Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
     - name: 💎 Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        bundler-cache: false
-        #ruby-version: 3.1 # Not necessary if .ruby-version is given
+        bundler-cache: true
+        #ruby-version: 3.2 # Not necessary if .ruby-version is given
 
     - name: 🔔 Exec wufoo2mattermost task
       env:
