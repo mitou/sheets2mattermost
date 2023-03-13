@@ -13,9 +13,9 @@ require "fileutils"
 require "google/apis/sheets_v4"
 require "googleauth"
 require "googleauth/stores/file_token_store"
-APPLICATION_NAME = "Google Sheets API Ruby Quickstart"
-SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
 
+APPLICATION_NAME = "未踏ジュニア速報スクリプト"
+SCOPE      = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
 TOKEN_PATH = File.join("./", 'tmp', "token.yaml")
 def authorize
   #client_id = Google::Auth::ClientId.new(ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'])
@@ -23,10 +23,7 @@ def authorize
   client_id = Google::Auth::ClientId.from_hash(MultiJson.load(GOOGLE_SECRETS))
 
   FileUtils.mkdir_p(File.dirname TOKEN_PATH)
-  File.open(TOKEN_PATH, "w") do |f|
-    y = GOOGLE_TOKENS.gsub("%", "\'")
-    f.write y
-  end
+  File.open(TOKEN_PATH, "w") { |f| f.write GOOGLE_TOKENS.gsub("%", "\'") }
   token_store = Google::Auth::Stores::FileTokenStore.new(file: TOKEN_PATH)
   authorizer  = Google::Auth::UserAuthorizer.new(client_id, SCOPE, token_store)
   user_id     = 'default'
@@ -50,7 +47,7 @@ range        = "A1:ZZ" # This covers almost all values in the sheet.
 response     = service.get_spreadsheet_values(GOOGLE_SHEETS_ID, range)
 list_of_rows = response.values.inject(&:zip).map(&:flatten)
 list_of_rows.each.with_index do |row, index|
-  next if index == 0 # The first row is label
+  next if index == 0 # The first row is label.
 
   #puts text = "#{index.to_s.rjust(3, '0')}: [#{row[TITLE]}](#{row[FILE]})"
   entries.push({
@@ -91,8 +88,10 @@ entries.each do |entry|
   abstract       = entry[:abstract]
   is_repost      = entry[:is_repost] ? '🔁' : '🆕'
   has_prototype  = entry[:has_prototype] ? '(プロトタイプ有)' : ''
+  text = "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}" + "\n\n" "> #{abstract}"
 
-  send_to_mattermost "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}" + "\n\n" "> #{abstract}"
+  #puts text
+  send_to_mattermost text
 end
 
 IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
