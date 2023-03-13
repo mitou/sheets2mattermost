@@ -92,7 +92,7 @@ entries.each do |entry|
   is_repost      = entry[:is_repost] ? '🔁' : '🆕'
   has_prototype  = entry[:has_prototype] ? '(プロトタイプ有)' : ''
 
-  send_to_mattermost "#{is_repost} `#{id}` **#{title}** \[[詳細を見る](#{file})\] #{has_prototype}" + "\n\n" "> #{abstract}"
+  send_to_mattermost "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}" + "\n\n" "> #{abstract}"
 end
 
 IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
