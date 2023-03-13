@@ -26,7 +26,7 @@ jobs:
         bundler-cache: true
         #ruby-version: 3.2 # Not necessary if .ruby-version is given
 
-    - name: 🔔 Exec wufoo2mattermost task
+    - name: 🔔 Notify new entry to Mattermost
       env:
         FILEPATH: 'entry_id_list.yaml'
         GOOGLE_SHEETS_ID:    ${{ secrets.GOOGLE_SHEETS_ID }}
