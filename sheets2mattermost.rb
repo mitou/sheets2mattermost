@@ -51,12 +51,12 @@ list_of_rows.each.with_index do |row, index|
 
   #puts text = "#{index.to_s.rjust(3, '0')}: [#{row[TITLE]}](#{row[FILE]})"
   entries.push({
-    id:       index,
-    title:    row[TITLE],
-    file:     row[FILE],
-    abstract: row[ABSTRACT],
-    is_repost:     row[IS_REPOST] == 'はい' ? true : false,
-    has_prototype: row[HAS_PROTO] == 'はい' ? true : false,
+    id:        index,
+    title:     row[TITLE],
+    file:      row[FILE],
+    abstract:  row[ABSTRACT],
+    is_repost: row[IS_REPOST] == 'はい' ? true : false,
+    has_proto: row[HAS_PROTO] == 'はい' ? true : false,
   })
 end
 #puts entries
@@ -77,7 +77,7 @@ FileUtils.touch ENTRY_ID_FILE
 entry_id_list = YAML.load(IO.read ENTRY_ID_FILE) || []
 
 entries.each do |entry|
-  # Skip already-notified and work-in-progress entry (with no attached file)
+  # Skip already-notified entry
   next if entry_id_list.include? entry[:id]
 
   # Record new entry and notify it to Mattermost
@@ -87,8 +87,8 @@ entries.each do |entry|
   file           = entry[:file]
   abstract       = entry[:abstract]
   is_repost      = entry[:is_repost] ? '🔁' : '🆕'
-  has_prototype  = entry[:has_prototype] ? '(プロトタイプ有)' : ''
-  text = "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}" + "\n\n" "> #{abstract}"
+  has_prototype  = entry[:has_proto] ? '(プロトタイプ有)' : ''
+  text = "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}\n\n> #{abstract}"
 
   #puts text
   send_to_mattermost text
