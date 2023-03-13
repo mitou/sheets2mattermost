@@ -28,20 +28,18 @@ jobs:
 
     - name: 🔔 Exec wufoo2mattermost task
       env:
-        TZ: 'Asia/Tokyo'
         FILEPATH: 'entry_id_list.yaml'
-        WUFOO_API_USERNAME:  ${{ secrets.WUFOO_API_USERNAME }}
-        WUFOO_API_PASSWORD:  ${{ secrets.WUFOO_API_PASSWORD }}
-        WUFOO_API_SUBDOMAIN: ${{ secrets.WUFOO_API_SUBDOMAIN }}
-        WUFOO_API_FORM_ID:   ${{ secrets.WUFOO_API_FORM_ID }}
+        GOOGLE_SHEETS_ID:    ${{ secrets.GOOGLE_SHEETS_ID }}
+        GOOGLE_SECRETS:      ${{ secrets.GOOGLE_SECRETS }}
+        GOOGLE_TOKENS:       ${{ secrets.GOOGLE_TOKENS }}
         MATTERMOST_ENDPOINT: ${{ secrets.MATTERMOST_ENDPOINT }}
       run: |
-        bundle exec rake notify_wufoo_entry_to_mattermost
+        bundle exec rake notify_new_entry_to_mattermost
         if [ -n "$(git status ${{ env.FILEPATH }} --porcelain)" ]; then
           git config --global user.name  "Yohei Yasukawa"
           git config --global user.email "yohei@yasslab.jp"
           git checkout main
           git add ${{ env.FILEPATH }}
-          git commit -m '🤖 Update current YAML data by GitHub Actions'
+          git commit -m '🤖 Update Entry ID list by GitHub Actions'
           git push origin main
         fi
