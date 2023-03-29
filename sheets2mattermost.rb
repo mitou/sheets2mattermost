@@ -51,7 +51,7 @@ service.client_options.application_name = APPLICATION_NAME
 service.authorization = authorize
 
 # Fetch entries
-IS_REPOST    = 24
+IS_REPOST    = 23
 FILE,TITLE   = 25,26
 ABSTRACT     = 27
 HAS_PROTO    = 28
@@ -99,7 +99,7 @@ entries.each do |entry|
   title          = entry[:title]
   file           = entry[:file]
   abstract       = entry[:abstract]
-  is_repost      = entry[:is_repost] ? '🔁' : '🆕'
+  is_repost      = entry[:is_repost] ? '🆙' : '🆕'
   has_prototype  = entry[:has_proto] ? '(プロトタイプ有)' : ''
   text = "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}\n\n> #{abstract}"
 
