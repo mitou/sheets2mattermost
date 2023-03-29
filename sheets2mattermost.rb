@@ -101,10 +101,11 @@ entries.each do |entry|
   abstract       = entry[:abstract]
   is_repost      = entry[:is_repost] ? '🆙' : '🆕'
   has_prototype  = entry[:has_proto] ? '(プロトタイプ有)' : ''
-  text = "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}\n\n> #{abstract}"
+  text  = "#{is_repost} `#{id}` **#{title}** \[[提案書を見る](#{file})\] #{has_prototype}"
+  text += "\n\n"
+  text += "> #{abstract.lines.map(&:chomp).join("\n> ")}"
 
-  #puts text
-  send_to_mattermost text
+  ENV['IS_PRODUCTION'].eql?('true') ? send_to_mattermost(text) : puts(text + "\n\n")
 end
 
 IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
