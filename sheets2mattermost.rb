@@ -29,6 +29,19 @@ def authorize
   user_id     = 'default'
   credentials = authorizer.get_credentials(user_id)
 
+  # NOTE: This doesn't work anymore due to OOB Authorization is outdated.
+  #       Run `node .` that runs `index.js` script to refresh your token. ;)
+  #       (Use Google Chrome Incognito Window if not authorzed by errors.)
+  #if credentials.nil?
+  #  oob = "urn:ietf:wg:oauth:2.0:oob"
+  #  url = authorizer.get_authorization_url base_url: oob
+  #  puts "Open the following URL in the browser and enter the resulting code after authorization:\n" + url
+  #  code = gets
+  #  credentials = authorizer.get_and_store_credentials_from_code(
+  #          user_id: user_id, code: code, base_url: oob
+  #      )
+  #end
+
   credentials
 end
 
