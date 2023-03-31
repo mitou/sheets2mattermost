@@ -105,7 +105,9 @@ entries.each do |entry|
   text += "\n\n"
   text += "> #{abstract.lines.map(&:chomp).join("\n> ")}"
 
-  ENV['IS_PRODUCTION'].eql?('true') ? send_to_mattermost(text) : puts(text + "\n\n")
+  # NOTE: GitHub Actions always set 'CI' true
+  # https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+  ENV['CI'].eql?('true') ? send_to_mattermost(text) : puts(text + "\n\n")
 end
 
 IO.write(ENTRY_ID_FILE, entry_id_list.sort.reverse.to_yaml)
