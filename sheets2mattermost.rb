@@ -96,7 +96,7 @@ entries.each do |entry|
   # Record new entry and notify it to Mattermost
   entry_id_list << entry[:id]
   id             = entry[:id].to_s.rjust(3, '0')
-  title          = entry[:title]
+  title          = entry[:title].strip
   file           = entry[:file]
   abstract       = entry[:abstract]
   is_repost      = entry[:is_repost] ? '🆙' : '🆕'
