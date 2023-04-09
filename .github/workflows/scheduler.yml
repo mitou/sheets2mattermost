@@ -3,9 +3,9 @@ name: Scheduler (Every 60 minutes)
 on:
   # The shortest interval you can run scheduled workflows is once every 5 minutes.
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-  schedule:
-    - cron: '0 * * * *'    # Every 60 minutes
-  # - cron: '*/10 * * * *' # Every 10 minutes
+  #schedule:
+  #- cron: '0 * * * *'    # Every 60 minutes
+  #- cron: '*/10 * * * *' # Every 10 minutes
 
   # Allows you to run this workflow manually from the Actions tab
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
